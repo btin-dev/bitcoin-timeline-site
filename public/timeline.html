@@ -44,6 +44,42 @@
             pointer-events: none;
         }
 
+        #shooting-stars-container {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 3;
+            pointer-events: none;
+            overflow: hidden;
+        }
+
+        .shooting-star {
+            position: absolute;
+            height: 1px;
+            background: linear-gradient(90deg, rgba(255,255,255,0) 0%, rgba(255,255,255,1) 50%, rgba(255,255,255,1) 100%);
+            border-radius: 1px;
+            animation: shootingStarDraw 0.5s ease-out forwards;
+            transform-origin: left center;
+            box-shadow: 0 0 6px rgba(255,255,255,0.6), 0 0 12px rgba(255,255,255,0.3);
+        }
+
+        @keyframes shootingStarDraw {
+            0% {
+                width: 0;
+                opacity: 1;
+            }
+            40% {
+                width: 400px;
+                opacity: 1;
+            }
+            100% {
+                width: 400px;
+                opacity: 0;
+            }
+        }
+
         #content {
             position: fixed;
             width: 100%;
@@ -913,6 +949,7 @@
     </button>
     <div id="canvas-container"></div>
     <div class="genesis-lightning"></div>
+    <div id="shooting-stars-container"></div>
     
     <div id="content">
         <!-- Hero Section -->
@@ -3824,7 +3861,7 @@
             
             // Track ecosystem phase
             isEcosystemPhase = currentSectionData.act === 'ecosystem';
-            
+
             // Clear all active states
             chapterCards.forEach(card => card.classList.remove('active'));
             eventElements.forEach(event => event.classList.remove('active'));
@@ -3903,12 +3940,12 @@
                     meteor.position.x += meteor.velocity.x;
                     meteor.position.y += meteor.velocity.y;
                     meteor.position.z += meteor.velocity.z;
-                    
+
                     // Wrap around when they go out of bounds
                     if (Math.abs(meteor.position.x) > 50) meteor.position.x *= -0.9;
                     if (Math.abs(meteor.position.y) > 50) meteor.position.y *= -0.9;
                     if (Math.abs(meteor.position.z) > 50) meteor.position.z *= -0.9;
-                    
+
                     // Rotate for effect
                     meteor.rotation.x += 0.02;
                     meteor.rotation.y += 0.02;
@@ -3929,6 +3966,39 @@
             particleSystem.rotation.y += 0.0003;
             renderer.render(scene, camera);
         }
+
+        // Shooting stars - random, infrequent
+        const shootingStarsContainer = document.getElementById('shooting-stars-container');
+
+        function createShootingStar() {
+            const star = document.createElement('div');
+            star.className = 'shooting-star';
+
+            // Random position (top half of screen mostly)
+            star.style.top = (Math.random() * 60) + '%';
+            star.style.left = (Math.random() * 70) + '%';
+
+            // Random angle (-30 to 30 degrees)
+            const angle = (Math.random() - 0.5) * 60;
+            star.style.transform = `rotate(${angle}deg)`;
+
+            shootingStarsContainer.appendChild(star);
+
+            // Remove after animation
+            setTimeout(() => star.remove(), 500);
+        }
+
+        function scheduleNextShootingStar() {
+            // Random interval between 20-40 seconds
+            const delay = 20000 + Math.random() * 20000;
+            setTimeout(() => {
+                createShootingStar();
+                scheduleNextShootingStar();
+            }, delay);
+        }
+
+        // Start the shooting star cycle
+        scheduleNextShootingStar();
 
         animate();
         updateScene();
