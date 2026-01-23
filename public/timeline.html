@@ -501,14 +501,21 @@
         /* Title wrapper for inline button */
         .event-title-wrapper {
             display: flex;
-            align-items: center;
-            flex-wrap: wrap;
-            gap: 0.5rem;
+            align-items: flex-start;
+            flex-wrap: nowrap;
+            gap: 1rem;
             margin-bottom: 1.5rem;
         }
 
         .event-title-wrapper .event-title {
             margin-bottom: 0;
+            flex: 1;
+        }
+
+        .event-title-wrapper .learn-more-btn {
+            flex-shrink: 0;
+            margin-left: 0;
+            margin-top: 0.3rem;
         }
 
         /* Back to Timeline Button */
@@ -555,6 +562,117 @@
             transform: translateY(-3px);
         }
 
+        /* Light/Dark Mode Toggle */
+        .mode-toggle {
+            position: fixed;
+            top: 2rem;
+            left: calc(50% + 140px);
+            background: rgba(0, 0, 0, 0.9);
+            border: 1px solid var(--blue-primary);
+            width: 70px;
+            height: 34px;
+            padding: 3px;
+            cursor: pointer;
+            z-index: 250;
+            transition: all 0.3s ease;
+            display: none;
+            align-items: center;
+            justify-content: space-between;
+            border-radius: 17px;
+        }
+
+        .mode-toggle.visible {
+            display: flex;
+        }
+
+        .mode-toggle:hover {
+            border-color: #fff;
+        }
+
+        .mode-toggle .toggle-track {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 100%;
+            height: 100%;
+            position: relative;
+        }
+
+        .mode-toggle .toggle-icon {
+            position: absolute;
+            width: 16px;
+            height: 16px;
+            z-index: 2;
+            transition: opacity 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .mode-toggle .moon-icon {
+            left: 9px;
+        }
+
+        .mode-toggle .sun-icon {
+            right: 9px;
+        }
+
+        .mode-toggle .toggle-icon svg {
+            width: 100%;
+            height: 100%;
+            fill: var(--blue-primary);
+            stroke: var(--blue-primary);
+            transition: fill 0.3s ease, stroke 0.3s ease;
+        }
+
+        .mode-toggle .sun-icon svg line {
+            stroke: var(--blue-primary);
+            transition: stroke 0.3s ease;
+        }
+
+        /* Moon icon - covered by slider in dark mode (default), needs to be dark */
+        .mode-toggle .moon-icon svg {
+            fill: #000;
+            stroke: #000;
+        }
+
+        /* Sun icon stays blue in dark mode */
+        .mode-toggle .sun-icon svg {
+            fill: var(--blue-primary);
+            stroke: var(--blue-primary);
+        }
+
+        /* When light mode active, moon goes back to blue */
+        .mode-toggle.light-active .moon-icon svg {
+            fill: var(--blue-primary);
+            stroke: var(--blue-primary);
+        }
+
+        /* When light mode active, sun is under slider, needs to be dark */
+        .mode-toggle.light-active .sun-icon svg {
+            fill: #000;
+            stroke: #000;
+        }
+
+        .mode-toggle.light-active .sun-icon svg line {
+            stroke: #000;
+        }
+
+        .mode-toggle .toggle-slider {
+            position: absolute;
+            left: 3px;
+            width: 28px;
+            height: 28px;
+            background: var(--blue-primary);
+            border-radius: 50%;
+            transition: left 0.3s ease;
+            z-index: 1;
+        }
+
+        .mode-toggle.light-active .toggle-slider {
+            left: calc(100% - 31px);
+        }
+
         /* Expanded Detail Section */
         .detail-section {
             position: fixed;
@@ -567,7 +685,7 @@
             z-index: 150;
             opacity: 0;
             pointer-events: none;
-            transition: opacity 0.6s ease, top 0.8s cubic-bezier(0.34, 1.56, 0.64, 1);
+            transition: opacity 0.6s ease, top 0.8s cubic-bezier(0.34, 1.56, 0.64, 1), background 0.4s ease;
             overflow-y: auto;
             overflow-x: hidden;
         }
@@ -576,6 +694,87 @@
             opacity: 1;
             pointer-events: auto;
             top: 0;
+        }
+
+        /* Light Mode Styles */
+        .detail-section.light-mode {
+            background: linear-gradient(180deg, #f5f5f5 0%, #ffffff 100%);
+        }
+
+        .detail-section.light-mode .detail-header {
+            border-bottom-color: rgba(0, 100, 150, 0.2);
+        }
+
+        .detail-section.light-mode .detail-year {
+            color: #0077aa;
+        }
+
+        .detail-section.light-mode .detail-title {
+            color: #111111;
+        }
+
+        .detail-section.light-mode .detail-subtitle {
+            color: #444444;
+        }
+
+        .detail-section.light-mode .detail-block {
+            background: rgba(0, 150, 200, 0.05);
+            border-color: rgba(0, 150, 200, 0.2);
+        }
+
+        .detail-section.light-mode .detail-block h3 {
+            color: #0077aa;
+        }
+
+        .detail-section.light-mode .detail-block h3::before {
+            background: #0077aa;
+        }
+
+        .detail-section.light-mode .detail-block p {
+            color: #333333;
+        }
+
+        .detail-section.light-mode .person-card {
+            background: rgba(0, 0, 0, 0.03);
+            border-color: rgba(0, 150, 200, 0.2);
+        }
+
+        .detail-section.light-mode .person-name {
+            color: #111111;
+        }
+
+        .detail-section.light-mode .person-role {
+            color: #0077aa;
+        }
+
+        .detail-section.light-mode .person-bio {
+            color: #444444;
+        }
+
+        .detail-section.light-mode .person-link {
+            color: #0077aa;
+        }
+
+        .detail-section.light-mode .resource-link {
+            background: rgba(0, 0, 0, 0.03);
+            border-color: rgba(0, 150, 200, 0.15);
+        }
+
+        .detail-section.light-mode .resource-icon {
+            background: rgba(0, 150, 200, 0.1);
+            color: #0077aa;
+        }
+
+        .detail-section.light-mode .resource-title {
+            color: #111111;
+        }
+
+        .detail-section.light-mode .resource-desc {
+            color: #555555;
+        }
+
+        .detail-section.light-mode .resource-url {
+            color: #0077aa;
         }
 
         .detail-container {
@@ -831,11 +1030,13 @@
             text-align: center;
             padding: 2rem;
             opacity: 0;
+            pointer-events: none;
             transition: opacity 0.6s ease;
         }
 
         .ending.visible {
             opacity: 1;
+            pointer-events: auto;
         }
 
         .ending-logo {
@@ -881,6 +1082,16 @@
         .ending.visible .ending-subtitle {
             opacity: 1;
             transform: translateY(0);
+        }
+
+        .ending-subtitle a {
+            color: var(--text-secondary);
+            text-decoration: underline;
+            transition: color 0.3s ease;
+        }
+
+        .ending-subtitle a:hover {
+            color: #fff;
         }
 
         /* Progress Bar */
@@ -946,6 +1157,29 @@
     <button class="back-to-timeline" id="backToTimeline">
         <span class="arrow-up">↑</span>
         Back to Timeline
+    </button>
+    <button class="mode-toggle" id="modeToggle" title="Toggle Light/Dark Mode">
+        <div class="toggle-track">
+            <span class="toggle-icon moon-icon">
+                <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/>
+                </svg>
+            </span>
+            <span class="toggle-icon sun-icon">
+                <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                    <circle cx="12" cy="12" r="5"/>
+                    <line x1="12" y1="1" x2="12" y2="3" stroke-width="2" stroke-linecap="round"/>
+                    <line x1="12" y1="21" x2="12" y2="23" stroke-width="2" stroke-linecap="round"/>
+                    <line x1="4.22" y1="4.22" x2="5.64" y2="5.64" stroke-width="2" stroke-linecap="round"/>
+                    <line x1="18.36" y1="18.36" x2="19.78" y2="19.78" stroke-width="2" stroke-linecap="round"/>
+                    <line x1="1" y1="12" x2="3" y2="12" stroke-width="2" stroke-linecap="round"/>
+                    <line x1="21" y1="12" x2="23" y2="12" stroke-width="2" stroke-linecap="round"/>
+                    <line x1="4.22" y1="19.78" x2="5.64" y2="18.36" stroke-width="2" stroke-linecap="round"/>
+                    <line x1="18.36" y1="5.64" x2="19.78" y2="4.22" stroke-width="2" stroke-linecap="round"/>
+                </svg>
+            </span>
+            <div class="toggle-slider"></div>
+        </div>
     </button>
     <div id="canvas-container"></div>
     <div class="genesis-lightning"></div>
@@ -3646,10 +3880,9 @@
         <!-- Ending Section -->
         <section class="ending">
             <img src="blockstream-logo.png" alt="Blockstream" class="ending-logo">
-            <div class="ending-text">And the rest was history.</div>
+            <div class="ending-text">The Future of Finance Runs on Bitcoin.</div>
             <p class="ending-subtitle">
-                From cypherpunk dreams to global revolution<br>
-                The story continues...
+                <a href="https://blockstream.com/about" target="_blank" rel="noopener">Learn how we're building it.</a>
             </p>
         </section>
     </div>
@@ -4009,8 +4242,29 @@
         // ============================================
         
         const backToTimelineBtn = document.getElementById('backToTimeline');
+        const modeToggleBtn = document.getElementById('modeToggle');
         const contentEl = document.getElementById('content');
-        
+        let isLightMode = false;
+
+        // Light/Dark mode toggle handler
+        modeToggleBtn.addEventListener('click', function() {
+            isLightMode = !isLightMode;
+            const detailSections = document.querySelectorAll('.detail-section');
+            detailSections.forEach(function(section) {
+                if (isLightMode) {
+                    section.classList.add('light-mode');
+                } else {
+                    section.classList.remove('light-mode');
+                }
+            });
+            // Update slider position
+            if (isLightMode) {
+                this.classList.add('light-active');
+            } else {
+                this.classList.remove('light-active');
+            }
+        });
+
         // Add click handlers to ALL Learn More buttons using event delegation
         document.querySelectorAll('.learn-more-btn[data-detail-target]').forEach(function(btn) {
             btn.addEventListener('click', function(e) {
@@ -4033,8 +4287,14 @@
             // Show the detail section (it will slide up via CSS transition)
             detailSection.classList.add('active');
             
-            // Show the back button
+            // Show the back button and mode toggle
             if (backToTimelineBtn) backToTimelineBtn.classList.add('visible');
+            if (modeToggleBtn) modeToggleBtn.classList.add('visible');
+
+            // Apply current mode to detail section
+            if (isLightMode) {
+                detailSection.classList.add('light-mode');
+            }
             
             // Hide the floating quote
             const activeEvent = detailSection.closest('.timeline-event');
@@ -4054,8 +4314,9 @@
                 detailSection.classList.remove('active');
             }
             
-            // Hide back button
+            // Hide back button and mode toggle
             if (backToTimelineBtn) backToTimelineBtn.classList.remove('visible');
+            if (modeToggleBtn) modeToggleBtn.classList.remove('visible');
             
             // Restore the quote after animation
             setTimeout(function() {
