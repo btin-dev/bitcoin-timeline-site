@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>The Road to Bitcoin | A Historical Timeline</title>
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;700;800&family=JetBrains+Mono:wght@400;600&display=swap');
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;600&display=swap');
         
         * {
             margin: 0;
@@ -28,7 +28,7 @@
         body {
             background: var(--bg-dark);
             color: var(--text-primary);
-            font-family: 'Outfit', sans-serif;
+            font-family: 'Inter', sans-serif;
             overflow: hidden;
             height: 100vh;
         }
@@ -73,11 +73,25 @@
             pointer-events: none;
         }
 
-        .hero-logo {
-            width: 300px;
-            margin-bottom: 3rem;
+        .presented-by {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            margin-bottom: 1rem;
             opacity: 0;
             animation: fadeInScale 1.5s ease forwards;
+        }
+
+        .presented-by-text {
+            font-size: 0.85rem;
+            font-weight: 400;
+            color: var(--text-secondary);
+            letter-spacing: 1px;
+        }
+
+        .hero-logo {
+            width: 160px;
+            opacity: 1;
         }
 
         @keyframes fadeInScale {
@@ -848,8 +862,16 @@
 
         /* Responsive */
         @media (max-width: 768px) {
+            .presented-by {
+                gap: 0.75rem;
+            }
+
+            .presented-by-text {
+                font-size: 0.7rem;
+            }
+
             .hero-logo {
-                width: 200px;
+                width: 120px;
             }
 
             .ending-logo {
@@ -895,7 +917,10 @@
     <div id="content">
         <!-- Hero Section -->
         <section class="hero">
-            <img src="Blockstream_logo_svg.png" alt="Blockstream" class="hero-logo">
+            <div class="presented-by">
+                <span class="presented-by-text">Presented by</span>
+                <img src="blockstream-logo.png" alt="Blockstream" class="hero-logo">
+            </div>
             <h1 class="hero-title">THE ROAD TO BITCOIN</h1>
             <p class="hero-subtitle">A Journey Through the Events That Made Digital Cash Possible</p>
             <div class="scroll-indicator">— Scroll to Begin —</div>
@@ -3583,7 +3608,7 @@
 
         <!-- Ending Section -->
         <section class="ending">
-            <img src="Blockstream_logo_svg.png" alt="Blockstream" class="ending-logo">
+            <img src="blockstream-logo.png" alt="Blockstream" class="ending-logo">
             <div class="ending-text">And the rest was history.</div>
             <p class="ending-subtitle">
                 From cypherpunk dreams to global revolution<br>
