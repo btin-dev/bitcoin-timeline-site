@@ -3,9 +3,16 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>The Road to Bitcoin | A Historical Timeline</title>
+    <title>A Journey Through Cyberspace | A Historical Timeline</title>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;600&display=swap');
+
+        @font-face {
+            font-family: 'Rigid Square';
+            src: local('Rigid Square'), local('RigidSquare');
+            font-weight: normal;
+            font-style: normal;
+        }
         
         * {
             margin: 0;
@@ -31,6 +38,7 @@
             font-family: 'Inter', sans-serif;
             overflow: hidden;
             height: 100vh;
+            font-feature-settings: "zero" off;
         }
 
         /* Canvas Background */
@@ -142,6 +150,7 @@
         }
 
         .hero-title {
+            font-family: 'Rigid Square', 'Inter', sans-serif;
             font-size: clamp(2.5rem, 8vw, 5rem);
             font-weight: 800;
             background: linear-gradient(135deg, var(--blue-primary), var(--blue-secondary));
@@ -220,7 +229,7 @@
         }
 
         .chapter-number {
-            font-family: 'JetBrains Mono', monospace;
+            font-family: 'Rigid Square', 'Inter', sans-serif;
             font-size: 1.2rem;
             color: var(--blue-primary);
             letter-spacing: 4px;
@@ -236,6 +245,7 @@
         }
 
         .chapter-title {
+            font-family: 'Rigid Square', 'Inter', sans-serif;
             font-size: clamp(2.5rem, 6vw, 4.5rem);
             font-weight: 800;
             background: linear-gradient(135deg, var(--blue-primary), var(--blue-secondary));
@@ -283,6 +293,7 @@
             opacity: 1;
         }
 
+
         /* Horizontal Timeline Line */
         .timeline-line {
             position: absolute;
@@ -293,6 +304,83 @@
             background: var(--line-color);
             transform: translateY(-50%);
             z-index: 1;
+        }
+
+        /* Year notches on timeline */
+        .year-notch {
+            position: absolute;
+            top: 50%;
+            transform: translate(-50%, -50%);
+            z-index: 9998;
+            cursor: pointer;
+            opacity: 0;
+            transition: opacity 0.5s ease;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            pointer-events: none;
+            padding: 10px 8px;
+        }
+
+        .year-notch::before {
+            content: '';
+            position: absolute;
+            top: -5px;
+            left: -10px;
+            right: -10px;
+            bottom: -5px;
+        }
+
+        .year-notch.visible {
+            opacity: 1;
+            pointer-events: auto !important;
+        }
+
+        .year-notch .notch-line {
+            width: 2px;
+            height: 12px;
+            background: var(--blue-primary);
+            transition: all 0.2s ease;
+        }
+
+        .year-notch .notch-year {
+            font-family: 'Rigid Square', 'Inter', sans-serif;
+            font-size: 0.6rem;
+            color: var(--blue-primary);
+            opacity: 0.6;
+            margin-bottom: 4px;
+            transition: all 0.2s ease;
+            white-space: nowrap;
+        }
+
+        .year-notch:hover .notch-line {
+            width: 3px;
+            height: 16px;
+            box-shadow: 0 0 8px var(--blue-primary);
+        }
+
+        .year-notch:hover .notch-year {
+            opacity: 1;
+            font-size: 0.7rem;
+        }
+
+        /* Genesis lightning icon */
+        .year-notch .genesis-icon {
+            position: absolute;
+            top: -8px;
+            width: 12px;
+            height: 12px;
+            opacity: 0.7;
+        }
+
+        .year-notch .genesis-icon svg {
+            width: 100%;
+            height: 100%;
+            fill: var(--blue-primary);
+        }
+
+        .year-notch:hover .genesis-icon {
+            opacity: 1;
         }
 
         /* Timeline Events */
@@ -319,6 +407,10 @@
         
         .timeline-event.active {
             opacity: 1;
+            pointer-events: none;
+        }
+
+        .timeline-event.active .event-card {
             pointer-events: auto;
         }
 
@@ -327,30 +419,46 @@
             position: absolute;
             top: 50%;
             left: 10%; /* Start position */
-            width: 20px;
-            height: 20px;
+            width: 50px;
+            height: 50px;
             background: var(--bg-dark);
-            border: 3px solid var(--line-color);
+            border: none;
             border-radius: 50%;
             transform: translate(-50%, -50%);
-            z-index: 10;
+            z-index: 9999;
             opacity: 0;
-            transition: left 0.6s cubic-bezier(0.25, 0.46, 0.45, 0.94), 
-                        width 0.3s ease, 
-                        height 0.3s ease,
-                        border-color 0.3s ease,
-                        background 0.3s ease,
-                        opacity 0.3s ease,
-                        box-shadow 0.3s ease;
+            cursor: grab;
+            transition: left 0.6s cubic-bezier(0.25, 0.46, 0.45, 0.94),
+                        opacity 0.3s ease;
+            pointer-events: auto !important;
+        }
+
+        .timeline-notch:active {
+            cursor: grabbing;
         }
 
         .timeline-notch.active {
             opacity: 1;
-            width: 30px;
-            height: 30px;
-            border-color: var(--blue-primary);
-            background: var(--blue-primary);
-            box-shadow: 0 0 30px var(--blue-primary);
+        }
+
+        .timeline-notch::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 70px;
+            height: 70px;
+            transform: translate(-50%, -50%);
+            border-radius: 50%;
+            cursor: grab;
+        }
+
+        .timeline-notch .notch-ring {
+            width: 100%;
+            height: 100%;
+            transition: transform 0.1s linear;
+            filter: drop-shadow(0 0 10px rgba(0, 212, 255, 0.6));
+            pointer-events: none;
         }
 
         /* Event Card - positioned above timeline */
@@ -377,12 +485,13 @@
             font-size: 4rem;
             font-weight: 800;
             color: var(--blue-primary);
-            text-shadow: 0 0 30px rgba(0, 212, 255, 0.5);
+            text-shadow: 0 0 15px rgba(0, 212, 255, 0.3);
             margin-bottom: 1rem;
-            font-family: 'JetBrains Mono', monospace;
+            font-family: 'Inter', sans-serif;
         }
 
         .event-title {
+            font-family: 'Rigid Square', 'Inter', sans-serif;
             font-size: 2rem;
             font-weight: 700;
             margin-bottom: 1.5rem;
@@ -465,6 +574,7 @@
 
         /* Learn More Button */
         .learn-more-btn {
+            font-family: 'Rigid Square', 'Inter', sans-serif;
             display: inline-flex;
             align-items: center;
             gap: 0.5rem;
@@ -472,10 +582,8 @@
             border: 1px solid var(--blue-primary);
             color: var(--blue-primary);
             padding: 0.5rem 1rem;
-            font-family: 'JetBrains Mono', monospace;
-            font-size: 0.75rem;
-            letter-spacing: 1px;
-            text-transform: uppercase;
+            font-size: 0.8rem;
+            letter-spacing: 0.5px;
             cursor: pointer;
             margin-left: 1rem;
             transition: all 0.3s ease;
@@ -520,6 +628,7 @@
 
         /* Back to Timeline Button */
         .back-to-timeline {
+            font-family: 'Rigid Square', 'Inter', sans-serif;
             position: fixed;
             top: 2rem;
             left: 50%;
@@ -528,12 +637,10 @@
             border: 1px solid var(--blue-primary);
             color: var(--blue-primary);
             padding: 0.75rem 2rem;
-            font-family: 'JetBrains Mono', monospace;
-            font-size: 0.8rem;
-            letter-spacing: 2px;
-            text-transform: uppercase;
+            font-size: 0.85rem;
+            letter-spacing: 0.5px;
             cursor: pointer;
-            z-index: 200;
+            z-index: 10003;
             transition: all 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
             display: flex;
             align-items: center;
@@ -573,7 +680,7 @@
             height: 34px;
             padding: 3px;
             cursor: pointer;
-            z-index: 250;
+            z-index: 10003;
             transition: all 0.3s ease;
             display: none;
             align-items: center;
@@ -682,7 +789,7 @@
             height: 100vh;
             background: linear-gradient(180deg, var(--bg-dark) 0%, #050510 100%);
             padding: 6rem 2rem 4rem;
-            z-index: 150;
+            z-index: 10002;
             opacity: 0;
             pointer-events: none;
             transition: opacity 0.6s ease, top 0.8s cubic-bezier(0.34, 1.56, 0.64, 1), background 0.4s ease;
@@ -694,6 +801,12 @@
             opacity: 1;
             pointer-events: auto;
             top: 0;
+        }
+
+        /* When opened from quiz review - appear instantly with highest z-index */
+        .detail-section.from-quiz {
+            transition: none !important;
+            z-index: 20000 !important;
         }
 
         /* Light Mode Styles */
@@ -789,7 +902,7 @@
         }
 
         .detail-year {
-            font-family: 'JetBrains Mono', monospace;
+            font-family: 'Inter', sans-serif;
             font-size: 1rem;
             color: var(--blue-primary);
             letter-spacing: 3px;
@@ -797,6 +910,7 @@
         }
 
         .detail-title {
+            font-family: 'Rigid Square', 'Inter', sans-serif;
             font-size: 2.5rem;
             font-weight: 700;
             color: var(--text-primary);
@@ -823,6 +937,7 @@
         }
 
         .detail-block h3 {
+            font-family: 'Rigid Square', 'Inter', sans-serif;
             font-size: 1.2rem;
             font-weight: 600;
             color: var(--blue-primary);
@@ -874,6 +989,7 @@
         }
 
         .person-name {
+            font-family: 'Rigid Square', 'Inter', sans-serif;
             font-size: 1.1rem;
             font-weight: 600;
             color: var(--text-primary);
@@ -952,6 +1068,7 @@
         }
 
         .resource-title {
+            font-family: 'Rigid Square', 'Inter', sans-serif;
             font-size: 0.95rem;
             font-weight: 600;
             color: var(--text-primary);
@@ -1040,8 +1157,8 @@
         }
 
         .ending-logo {
-            width: 400px;
-            margin-bottom: 3rem;
+            width: 160px;
+            margin-bottom: 1rem;
             opacity: 0;
             transform: scale(0.9);
             transition: opacity 1.5s ease, transform 1.5s ease;
@@ -1053,6 +1170,7 @@
         }
 
         .ending-text {
+            font-family: 'Rigid Square', 'Inter', sans-serif;
             font-size: clamp(2rem, 6vw, 4rem);
             font-weight: 700;
             background: linear-gradient(135deg, var(--blue-primary), var(--blue-secondary));
@@ -1094,6 +1212,407 @@
             color: #fff;
         }
 
+        /* Quiz Button */
+        .quiz-btn {
+            font-family: 'Rigid Square', 'Inter', sans-serif;
+            margin-top: 2rem;
+            padding: 1rem 2rem;
+            background: transparent;
+            border: 2px solid var(--blue-primary);
+            color: var(--blue-primary);
+            font-size: 1rem;
+            letter-spacing: 0.5px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            opacity: 0;
+            transform: translateY(20px);
+        }
+
+        .ending.visible .quiz-btn {
+            opacity: 1;
+            transform: translateY(0);
+            transition-delay: 0.9s;
+        }
+
+        .quiz-btn:hover {
+            background: var(--blue-primary);
+            color: var(--bg-dark);
+            box-shadow: 0 0 30px rgba(0, 212, 255, 0.5);
+        }
+
+        /* Quiz Modal */
+        .quiz-modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            background: rgba(0, 0, 0, 0.95);
+            z-index: 10000;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .quiz-modal.active {
+            display: flex;
+            opacity: 1;
+        }
+
+        .quiz-results-modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            background: linear-gradient(180deg, var(--bg-dark) 0%, #050510 100%);
+            z-index: 10000;
+            display: none;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+            overflow-y: auto;
+            padding: 2rem;
+        }
+
+        .quiz-results-modal.active {
+            display: block;
+            opacity: 1;
+        }
+
+        .quiz-container {
+            background: var(--bg-card);
+            border: 1px solid var(--blue-primary);
+            border-radius: 12px;
+            max-width: 700px;
+            width: 90%;
+            max-height: 85vh;
+            overflow-y: auto;
+            padding: 2rem;
+            position: relative;
+        }
+
+        .quiz-results-container {
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        .quiz-close {
+            position: absolute;
+            top: 1rem;
+            right: 1rem;
+            background: none;
+            border: none;
+            color: var(--text-secondary);
+            font-size: 2rem;
+            cursor: pointer;
+            transition: color 0.3s ease;
+        }
+
+        .quiz-close:hover {
+            color: var(--blue-primary);
+        }
+
+        .quiz-title {
+            font-family: 'Rigid Square', 'Inter', sans-serif;
+            font-size: 1.5rem;
+            color: var(--blue-primary);
+            margin-bottom: 1.5rem;
+            text-align: center;
+        }
+
+        .results-header {
+            text-align: center;
+            padding-bottom: 1rem;
+            border-bottom: 1px solid rgba(0, 212, 255, 0.1);
+            margin-bottom: 1rem;
+            position: relative;
+        }
+
+        .results-close-btn {
+            position: absolute;
+            top: 0;
+            right: 0;
+            background: none;
+            border: none;
+            color: var(--text-secondary);
+            font-size: 2rem;
+            cursor: pointer;
+            transition: color 0.3s ease;
+            line-height: 1;
+        }
+
+        .results-close-btn:hover {
+            color: var(--blue-primary);
+        }
+
+        .results-title {
+            font-family: 'Rigid Square', 'Inter', sans-serif;
+            font-size: 1.5rem;
+            color: var(--blue-primary);
+            margin-bottom: 0.75rem;
+        }
+
+        .quiz-progress {
+            margin-bottom: 2rem;
+            text-align: center;
+        }
+
+        .quiz-progress span {
+            color: var(--text-secondary);
+            font-size: 0.9rem;
+        }
+
+        .progress-bar-quiz {
+            width: 100%;
+            height: 4px;
+            background: rgba(0, 212, 255, 0.2);
+            border-radius: 2px;
+            margin-top: 0.5rem;
+            overflow: hidden;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: var(--blue-primary);
+            width: 0%;
+            transition: width 0.3s ease;
+        }
+
+        .quiz-content {
+            min-height: 300px;
+        }
+
+        .quiz-question {
+            font-size: 1.1rem;
+            color: var(--text-primary);
+            margin-bottom: 1.5rem;
+            line-height: 1.5;
+        }
+
+        .quiz-options {
+            display: flex;
+            flex-direction: column;
+            gap: 0.75rem;
+        }
+
+        .quiz-option {
+            display: flex;
+            align-items: center;
+            padding: 1rem;
+            background: rgba(0, 212, 255, 0.05);
+            border: 1px solid rgba(0, 212, 255, 0.2);
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .quiz-option:hover {
+            border-color: var(--blue-primary);
+            background: rgba(0, 212, 255, 0.1);
+        }
+
+        .quiz-option.selected {
+            border-color: var(--blue-primary);
+            background: rgba(0, 212, 255, 0.15);
+        }
+
+        .quiz-option input {
+            display: none;
+        }
+
+        .quiz-option .option-marker {
+            width: 20px;
+            height: 20px;
+            border: 2px solid var(--blue-primary);
+            border-radius: 50%;
+            margin-right: 1rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+        }
+
+        .quiz-option.selected .option-marker::after {
+            content: '';
+            width: 10px;
+            height: 10px;
+            background: var(--blue-primary);
+            border-radius: 50%;
+        }
+
+        .quiz-option .option-text {
+            color: var(--text-primary);
+            font-size: 0.95rem;
+        }
+
+        .quiz-navigation {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 2rem;
+            gap: 1rem;
+        }
+
+        .quiz-nav-btn {
+            font-family: 'Rigid Square', 'Inter', sans-serif;
+            padding: 0.75rem 1.5rem;
+            background: transparent;
+            border: 1px solid var(--text-secondary);
+            color: var(--text-secondary);
+            font-size: 0.9rem;
+            letter-spacing: 0.5px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-transform: none;
+        }
+
+        .quiz-nav-btn:disabled {
+            opacity: 0.3;
+            cursor: not-allowed;
+        }
+
+        .quiz-nav-btn.primary {
+            border-color: var(--blue-primary);
+            color: var(--blue-primary);
+        }
+
+        .quiz-nav-btn.primary:hover:not(:disabled) {
+            background: var(--blue-primary);
+            color: var(--bg-dark);
+        }
+
+        .quiz-nav-btn:hover:not(:disabled) {
+            border-color: var(--blue-primary);
+            color: var(--blue-primary);
+        }
+
+        /* Results */
+        .score-display {
+            text-align: center;
+            margin: 0.5rem 0;
+        }
+
+        .score-number {
+            font-family: 'Rigid Square', 'Inter', sans-serif;
+            font-size: 3rem;
+            color: var(--blue-primary);
+        }
+
+        .score-total {
+            font-family: 'Rigid Square', 'Inter', sans-serif;
+            font-size: 1.25rem;
+            color: var(--text-secondary);
+        }
+
+        .score-message {
+            text-align: center;
+            color: var(--text-secondary);
+            margin-bottom: 0.75rem;
+            font-size: 0.85rem;
+        }
+
+        .further-reading {
+            background: rgba(0, 212, 255, 0.03);
+            border: 1px solid rgba(0, 212, 255, 0.1);
+            border-radius: 8px;
+            padding: 1.25rem;
+            margin-top: 1rem;
+        }
+
+        .further-reading h3 {
+            font-family: 'Rigid Square', 'Inter', sans-serif;
+            font-size: 1rem;
+            font-weight: 600;
+            color: var(--blue-primary);
+            margin-bottom: 1rem;
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+
+        .further-reading h3::before {
+            content: '';
+            width: 4px;
+            height: 1.2rem;
+            background: var(--blue-primary);
+            border-radius: 2px;
+        }
+
+        .further-reading .reading-list {
+            display: flex;
+            flex-direction: column;
+            gap: 0.75rem;
+        }
+
+        .further-reading .reading-link {
+            display: flex;
+            align-items: flex-start;
+            gap: 0.75rem;
+            padding: 0.75rem;
+            background: rgba(0, 0, 0, 0.3);
+            border: 1px solid rgba(0, 212, 255, 0.1);
+            border-radius: 6px;
+            text-decoration: none;
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+
+        .further-reading .reading-link:hover {
+            border-color: var(--blue-primary);
+            background: rgba(0, 212, 255, 0.05);
+        }
+
+        .further-reading .reading-icon {
+            width: 32px;
+            height: 32px;
+            background: rgba(0, 212, 255, 0.1);
+            border-radius: 6px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--blue-primary);
+            font-size: 1rem;
+            flex-shrink: 0;
+        }
+
+        .further-reading .reading-info {
+            flex: 1;
+        }
+
+        .further-reading .reading-title {
+            font-family: 'Rigid Square', 'Inter', sans-serif;
+            font-size: 0.85rem;
+            font-weight: 600;
+            color: var(--text-primary);
+            margin-bottom: 0.2rem;
+        }
+
+        .further-reading .reading-desc {
+            font-size: 0.75rem;
+            color: var(--text-secondary);
+            line-height: 1.4;
+        }
+
+        .further-reading .reading-link:hover .reading-title {
+            color: var(--blue-primary);
+        }
+
+        .results-actions {
+            display: flex;
+            justify-content: center;
+            gap: 1rem;
+            flex-shrink: 0;
+            padding-top: 0.5rem;
+        }
+
+        .share-confirmation {
+            text-align: center;
+            color: var(--blue-primary);
+            margin-top: 1rem;
+            font-size: 0.9rem;
+        }
+
         /* Progress Bar */
         .progress-bar {
             position: fixed;
@@ -1122,7 +1641,7 @@
             }
 
             .ending-logo {
-                width: 250px;
+                width: 120px;
             }
 
             .event-card {
@@ -1192,15 +1711,17 @@
                 <span class="presented-by-text">Presented by</span>
                 <img src="blockstream-logo.png" alt="Blockstream" class="hero-logo">
             </div>
-            <h1 class="hero-title">THE ROAD TO BITCOIN</h1>
-            <p class="hero-subtitle">A Journey Through the Events That Made Digital Cash Possible</p>
+            <h1 class="hero-title">A Journey Through Cyberspace</h1>
+            <p class="hero-subtitle">A Historic Walk Through The Events That Made Bitcoin Possible</p>
             <div class="scroll-indicator">— Scroll to Begin —</div>
         </section>
 
         <!-- Timeline Wrapper -->
         <div class="timeline-wrapper">
             <div class="timeline-line"></div>
-            <div class="timeline-notch"></div>
+            <div class="timeline-notch" id="timelineNotch">
+                <img src="blockstream-ring.png" alt="" class="notch-ring">
+            </div>
             <div class="timeline-events">
                 
                 <!-- ACT I: THE FOUNDATIONS -->
@@ -3884,7 +4405,55 @@
             <p class="ending-subtitle">
                 <a href="https://blockstream.com/about" target="_blank" rel="noopener">Learn how we're building it.</a>
             </p>
+            <button class="quiz-btn" id="startQuizBtn">Test What You Know</button>
         </section>
+
+        <!-- Quiz Modal -->
+        <div class="quiz-modal" id="quizModal">
+            <div class="quiz-container">
+                <button class="quiz-close" id="quizClose">&times;</button>
+                <div class="quiz-header">
+                    <h2 class="quiz-title">Test Your Bitcoin History Knowledge</h2>
+                    <div class="quiz-progress">
+                        <span id="quizProgress">Question 1 of 21</span>
+                        <div class="progress-bar-quiz">
+                            <div class="progress-fill" id="quizProgressFill"></div>
+                        </div>
+                    </div>
+                </div>
+                <div class="quiz-content" id="quizContent">
+                    <!-- Questions will be inserted here -->
+                </div>
+                <div class="quiz-navigation">
+                    <button class="quiz-nav-btn" id="quizPrev" disabled>Previous</button>
+                    <button class="quiz-nav-btn primary" id="quizNext">Next</button>
+                    <button class="quiz-nav-btn primary" id="quizSubmit" style="display:none;">Submit Quiz</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Quiz Results Modal -->
+        <div class="quiz-results-modal" id="quizResultsModal">
+            <div class="quiz-results-container">
+                <div class="results-header">
+                    <button class="results-close-btn" id="resultsBackBtn">&times;</button>
+                    <h2 class="results-title">Your Results</h2>
+                    <div class="score-display" id="scoreDisplay">
+                        <span class="score-number" id="scoreNumber">0</span>
+                        <span class="score-total">/21</span>
+                    </div>
+                    <p class="score-message" id="scoreMessage"></p>
+                    <div class="results-actions">
+                        <button class="quiz-nav-btn" id="retakeQuiz">Retake Quiz</button>
+                        <button class="quiz-nav-btn primary" id="shareScore">Share Your Score</button>
+                    </div>
+                </div>
+                <div class="further-reading" id="furtherReading">
+                    <h3>Further Reading</h3>
+                    <div class="reading-list" id="readingList"></div>
+                </div>
+            </div>
+        </div>
     </div>
 
     <script>
@@ -3995,6 +4564,85 @@
             { type: 'ending', index: 28 }
         ];
 
+        // Event years data for notches
+        const eventYears = [
+            { sectionIndex: 2, year: '1976', title: 'Diffie-Hellman' },
+            { sectionIndex: 3, year: '1983', title: 'eCash' },
+            { sectionIndex: 4, year: '1991', title: 'Timestamps' },
+            { sectionIndex: 6, year: '1992', title: 'Cypherpunks' },
+            { sectionIndex: 7, year: '1997', title: 'Hashcash' },
+            { sectionIndex: 8, year: '1998', title: 'B-Money' },
+            { sectionIndex: 10, year: '2004', title: 'RPOW' },
+            { sectionIndex: 11, year: '2006', title: 'E-Gold' },
+            { sectionIndex: 13, year: '2008', title: 'Whitepaper' },
+            { sectionIndex: 14, year: '2009', title: 'Genesis' },
+            { sectionIndex: 15, year: '2009', title: 'Running Bitcoin' },
+            { sectionIndex: 17, year: '2010', title: 'Pizza Day' },
+            { sectionIndex: 18, year: '2010', title: 'Mt. Gox' },
+            { sectionIndex: 19, year: '2011', title: 'Silk Road' },
+            { sectionIndex: 20, year: '2011', title: 'Satoshi Leaves' },
+            { sectionIndex: 21, year: '2012', title: 'Halving' },
+            { sectionIndex: 22, year: '2013', title: 'Cyprus' },
+            { sectionIndex: 23, year: '2013', title: 'SR Shutdown' },
+            { sectionIndex: 24, year: '2013', title: 'ATMs' },
+            { sectionIndex: 25, year: '2013', title: '$1000' },
+            { sectionIndex: 26, year: '2014', title: 'Mt. Gox Fall' },
+            { sectionIndex: 27, year: '2014', title: 'Blockstream' }
+        ];
+
+        // Track visited sections for year notches
+        const visitedSections = new Set();
+        const yearNotchElements = new Map();
+
+        // Create year notches container
+        function createYearNotches() {
+            const timelineWrapper = document.querySelector('.timeline-wrapper');
+
+            eventYears.forEach((eventData, idx) => {
+                const notch = document.createElement('div');
+                notch.className = 'year-notch';
+                notch.dataset.sectionIndex = eventData.sectionIndex;
+
+                // Calculate position based on timeline progress
+                let timelineIndex = 0;
+                for (let i = 0; i <= eventData.sectionIndex; i++) {
+                    if (sections[i].type === 'chapter' || sections[i].type === 'event') {
+                        timelineIndex++;
+                    }
+                }
+                const progress = (timelineIndex - 1) / (totalTimelineSections - 1);
+                const position = 10 + (progress * 80);
+                notch.style.left = `${position}%`;
+
+                // Add lightning icon for Genesis Block (sectionIndex 14)
+                const isGenesis = eventData.sectionIndex === 14;
+                const lightningIcon = `<span class="genesis-icon"><svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/></svg></span>`;
+                notch.innerHTML = `
+                    ${isGenesis ? lightningIcon : ''}
+                    <span class="notch-year">${eventData.year}</span>
+                    <div class="notch-line"></div>
+                `;
+
+                notch.addEventListener('click', (e) => {
+                    e.stopPropagation();
+                    currentSection = eventData.sectionIndex;
+                    activateCurrentSection();
+                    targetPosition = currentSection;
+                });
+
+                timelineWrapper.appendChild(notch);
+                yearNotchElements.set(eventData.sectionIndex, notch);
+            });
+        }
+
+        // Show notches for visited sections
+        function updateVisitedNotches() {
+            visitedSections.forEach(sectionIdx => {
+                const notch = yearNotchElements.get(sectionIdx);
+                if (notch) notch.classList.add('visible');
+            });
+        }
+
         // Horizontal Scroll Logic
         const timelineEvents = document.querySelector('.timeline-events');
         const eventElements = document.querySelectorAll('.timeline-event');
@@ -4066,15 +4714,21 @@
             } else if (currentSectionData.type === 'ending') {
                 hero.classList.add('hidden');
                 timelineWrapper.classList.remove('visible');
+                timelineWrapper.classList.remove('faded');
                 ending.classList.add('visible');
                 isEcosystemPhase = false;
                 if (timelineNotch) timelineNotch.classList.remove('active');
+
+                // Mark all events as visited when reaching the end
+                eventYears.forEach(e => visitedSections.add(e.sectionIndex));
+                updateVisitedNotches();
                 return;
             }
             
             // We're in timeline
             hero.classList.add('hidden');
             timelineWrapper.classList.add('visible');
+            timelineWrapper.classList.remove('faded');
             ending.classList.remove('visible');
             if (timelineNotch) timelineNotch.classList.add('active');
             
@@ -4091,7 +4745,15 @@
             const progress = (timelineIndex - 1) / (totalTimelineSections - 1);
             const notchPosition = 10 + (progress * 80); // 10% to 90%
             if (timelineNotch) timelineNotch.style.left = `${notchPosition}%`;
-            
+
+            // Mark all previous event sections as visited (show trailing notches)
+            for (let i = 0; i < currentSection; i++) {
+                if (sections[i].type === 'event') {
+                    visitedSections.add(i);
+                }
+            }
+            updateVisitedNotches();
+
             // Track ecosystem phase
             isEcosystemPhase = currentSectionData.act === 'ecosystem';
 
@@ -4193,6 +4855,132 @@
             renderer.setSize(window.innerWidth, window.innerHeight);
         });
 
+        // Notch dragging functionality
+        const notchElement = document.getElementById('timelineNotch');
+        let isDragging = false;
+        let notchRotation = 0;
+        let lastNotchPosition = 10;
+
+        function updateNotchRotation(newPosition) {
+            const delta = newPosition - lastNotchPosition;
+            notchRotation += delta * 10; // Spin based on movement
+            if (notchElement) {
+                const ring = notchElement.querySelector('.notch-ring');
+                if (ring) ring.style.transform = `rotate(${notchRotation}deg)`;
+            }
+            lastNotchPosition = newPosition;
+        }
+
+        if (notchElement) {
+            notchElement.addEventListener('mousedown', (e) => {
+                if (!timelineWrapper.classList.contains('visible')) return;
+                isDragging = true;
+                notchElement.style.transition = 'none';
+                e.preventDefault();
+            });
+
+            document.addEventListener('mousemove', (e) => {
+                if (!isDragging) return;
+
+                const wrapperRect = timelineWrapper.getBoundingClientRect();
+                const relativeX = e.clientX - wrapperRect.left;
+                const percentage = (relativeX / wrapperRect.width) * 100;
+
+                // Clamp between 10% and 90%
+                const clampedPercentage = Math.max(10, Math.min(90, percentage));
+
+                // Update notch position visually
+                notchElement.style.left = `${clampedPercentage}%`;
+                updateNotchRotation(clampedPercentage);
+            });
+
+            document.addEventListener('mouseup', (e) => {
+                if (!isDragging) return;
+                isDragging = false;
+                notchElement.style.transition = '';
+
+                // Calculate which section we should snap to
+                const wrapperRect = timelineWrapper.getBoundingClientRect();
+                const relativeX = e.clientX - wrapperRect.left;
+                const percentage = (relativeX / wrapperRect.width) * 100;
+                const clampedPercentage = Math.max(10, Math.min(90, percentage));
+
+                // Convert percentage to timeline section
+                const progress = (clampedPercentage - 10) / 80; // 0 to 1
+                const targetTimelineIndex = Math.round(progress * (totalTimelineSections - 1));
+
+                // Find the actual section index for this timeline index
+                let timelineCount = 0;
+                for (let i = 0; i < sections.length; i++) {
+                    if (sections[i].type === 'chapter' || sections[i].type === 'event') {
+                        if (timelineCount === targetTimelineIndex) {
+                            currentSection = i;
+                            break;
+                        }
+                        timelineCount++;
+                    }
+                }
+
+                activateCurrentSection();
+                targetPosition = currentSection;
+            });
+
+            // Touch support
+            notchElement.addEventListener('touchstart', (e) => {
+                if (!timelineWrapper.classList.contains('visible')) return;
+                isDragging = true;
+                notchElement.style.transition = 'none';
+                e.preventDefault();
+            }, { passive: false });
+
+            document.addEventListener('touchmove', (e) => {
+                if (!isDragging) return;
+
+                const touch = e.touches[0];
+                const wrapperRect = timelineWrapper.getBoundingClientRect();
+                const relativeX = touch.clientX - wrapperRect.left;
+                const percentage = (relativeX / wrapperRect.width) * 100;
+
+                const clampedPercentage = Math.max(10, Math.min(90, percentage));
+                notchElement.style.left = `${clampedPercentage}%`;
+                updateNotchRotation(clampedPercentage);
+            }, { passive: false });
+
+            document.addEventListener('touchend', (e) => {
+                if (!isDragging) return;
+                isDragging = false;
+                notchElement.style.transition = '';
+
+                // Snap to nearest section
+                const currentLeft = parseFloat(notchElement.style.left) || 10;
+                const progress = (currentLeft - 10) / 80;
+                const targetTimelineIndex = Math.round(progress * (totalTimelineSections - 1));
+
+                let timelineCount = 0;
+                for (let i = 0; i < sections.length; i++) {
+                    if (sections[i].type === 'chapter' || sections[i].type === 'event') {
+                        if (timelineCount === targetTimelineIndex) {
+                            currentSection = i;
+                            break;
+                        }
+                        timelineCount++;
+                    }
+                }
+
+                activateCurrentSection();
+                targetPosition = currentSection;
+            });
+        }
+
+        // Update rotation when scrolling too
+        const originalActivateSection = activateCurrentSection;
+        activateCurrentSection = function() {
+            originalActivateSection();
+            // Update rotation based on notch position
+            const currentLeft = parseFloat(notchElement?.style.left) || 10;
+            updateNotchRotation(currentLeft);
+        };
+
         // Animation Loop
         function animate() {
             requestAnimationFrame(animate);
@@ -4232,6 +5020,9 @@
 
         // Start the shooting star cycle
         scheduleNextShootingStar();
+
+        // Create year notches on timeline
+        createYearNotches();
 
         animate();
         updateScene();
@@ -4280,13 +5071,38 @@
         function showDetail(detailId) {
             const detailSection = document.getElementById(detailId);
             if (!detailSection) return;
-            
+
             isInDetailView = true;
             activeDetailId = detailId;
-            
-            // Show the detail section (it will slide up via CSS transition)
+
+            // Hide the ending section so it doesn't show behind
+            if (ending) {
+                ending.classList.remove('visible');
+            }
+
+            // Make timeline-wrapper visible so detail sections can be seen
+            if (timelineWrapper) {
+                timelineWrapper.classList.add('visible');
+            }
+
+            // CRITICAL: The detail section is inside a timeline-event which may have
+            // opacity: 0 / visibility: hidden. We need to force the parent event visible.
+            const parentEvent = detailSection.closest('.timeline-event');
+            if (parentEvent) {
+                // Temporarily make parent event visible so detail can show
+                parentEvent.style.opacity = '1';
+                parentEvent.style.visibility = 'visible';
+                parentEvent.style.pointerEvents = 'auto';
+                // Hide the event card content (but not the detail section)
+                const eventCard = parentEvent.querySelector('.event-card');
+                if (eventCard) eventCard.style.display = 'none';
+                const eventQuote = parentEvent.querySelector('.event-quote');
+                if (eventQuote) eventQuote.style.display = 'none';
+            }
+
+            // Show the detail section
             detailSection.classList.add('active');
-            
+
             // Show the back button and mode toggle
             if (backToTimelineBtn) backToTimelineBtn.classList.add('visible');
             if (modeToggleBtn) modeToggleBtn.classList.add('visible');
@@ -4295,41 +5111,102 @@
             if (isLightMode) {
                 detailSection.classList.add('light-mode');
             }
-            
-            // Hide the floating quote
-            const activeEvent = detailSection.closest('.timeline-event');
-            if (activeEvent) {
-                const quote = activeEvent.querySelector('.event-quote');
-                if (quote) quote.style.opacity = '0';
-            }
         }
         
         function hideDetail() {
             if (!activeDetailId) return;
-            
+
             const detailSection = document.getElementById(activeDetailId);
-            
-            // Hide the detail section (it will slide down via CSS transition)
-            if (detailSection) {
-                detailSection.classList.remove('active');
-            }
-            
-            // Hide back button and mode toggle
+            const wasFromQuizReview = isFromQuizReview;
+
+            // Hide back button and mode toggle first
             if (backToTimelineBtn) backToTimelineBtn.classList.remove('visible');
             if (modeToggleBtn) modeToggleBtn.classList.remove('visible');
-            
-            // Restore the quote after animation
-            setTimeout(function() {
+
+            // Reset back button text
+            if (backToTimelineBtn) {
+                backToTimelineBtn.innerHTML = '<span class="arrow-up">↑</span> Back to Timeline';
+            }
+
+            if (wasFromQuizReview) {
+                // CRITICAL: Hide timeline-wrapper FIRST before showing anything
+                if (timelineWrapper) {
+                    timelineWrapper.style.opacity = '0';
+                    timelineWrapper.style.visibility = 'hidden';
+                    timelineWrapper.classList.remove('visible');
+                }
+
+                // Clean up the detail section immediately
                 if (detailSection) {
-                    const activeEvent = detailSection.closest('.timeline-event');
-                    if (activeEvent && activeEvent.classList.contains('active')) {
-                        const quote = activeEvent.querySelector('.event-quote');
-                        if (quote) quote.style.opacity = '0.8';
+                    const parentEvent = detailSection.closest('.timeline-event');
+                    if (parentEvent) {
+                        parentEvent.style.opacity = '0';
+                        parentEvent.style.visibility = 'hidden';
+                    }
+                    detailSection.classList.remove('active');
+                    detailSection.classList.remove('from-quiz');
+                }
+
+                // NOW show quiz modal (everything else is already hidden)
+                quizResultsModal.classList.add('active');
+                if (ending) ending.classList.add('visible');
+
+                // Clean up after a delay
+                setTimeout(() => {
+                    if (detailSection) {
+                        const parentEvent = detailSection.closest('.timeline-event');
+                        if (parentEvent) {
+                            parentEvent.style.opacity = '';
+                            parentEvent.style.visibility = '';
+                            parentEvent.style.pointerEvents = '';
+                            parentEvent.style.zIndex = '';
+                            parentEvent.style.position = '';
+                            parentEvent.style.top = '';
+                            parentEvent.style.left = '';
+                            parentEvent.style.width = '';
+                            parentEvent.style.height = '';
+                            parentEvent.style.transform = '';
+                            const eventCard = parentEvent.querySelector('.event-card');
+                            if (eventCard) eventCard.style.display = '';
+                            const eventQuote = parentEvent.querySelector('.event-quote');
+                            if (eventQuote) eventQuote.style.display = '';
+                        }
+                    }
+                    if (timelineWrapper) {
+                        timelineWrapper.style.opacity = '';
+                        timelineWrapper.style.visibility = '';
+                    }
+                }, 100);
+            } else {
+                // Normal close (not from quiz review)
+                if (detailSection) {
+                    detailSection.classList.remove('active');
+                    detailSection.classList.remove('from-quiz');
+
+                    const parentEvent = detailSection.closest('.timeline-event');
+                    if (parentEvent) {
+                        parentEvent.style.opacity = '';
+                        parentEvent.style.visibility = '';
+                        parentEvent.style.pointerEvents = '';
+                        parentEvent.style.zIndex = '';
+                        parentEvent.style.position = '';
+                        parentEvent.style.top = '';
+                        parentEvent.style.left = '';
+                        parentEvent.style.width = '';
+                        parentEvent.style.height = '';
+                        parentEvent.style.transform = '';
+                        const eventCard = parentEvent.querySelector('.event-card');
+                        if (eventCard) eventCard.style.display = '';
+                        const eventQuote = parentEvent.querySelector('.event-quote');
+                        if (eventQuote) eventQuote.style.display = '';
                     }
                 }
-                isInDetailView = false;
-                activeDetailId = null;
-            }, 800);
+            }
+
+            // Reset state
+            isInDetailView = false;
+            activeDetailId = null;
+            isFromQuizReview = false;
         }
         
         // Back to Timeline button click handler
@@ -4354,6 +5231,304 @@
                 hideDetail();
             }
         });
+
+        // ============================================
+        // Quiz Functionality
+        // ============================================
+
+        const quizQuestions = [
+            // Foundations
+            { question: "In what year was the Diffie-Hellman key exchange published?", options: ["1974", "1976", "1978", "1980"], correct: 1, topic: "Diffie-Hellman", link: "#diffie-hellman-detail" },
+            { question: "Who introduced the concept of public-key cryptography?", options: ["Satoshi Nakamoto", "David Chaum", "Whitfield Diffie & Martin Hellman", "Hal Finney"], correct: 2, topic: "Diffie-Hellman", link: "#diffie-hellman-detail" },
+            { question: "What problem did Diffie-Hellman solve?", options: ["Double spending", "Key distribution", "Transaction speed", "Mining difficulty"], correct: 1, topic: "Diffie-Hellman", link: "#diffie-hellman-detail" },
+            { question: "In what year did David Chaum introduce eCash?", options: ["1981", "1983", "1985", "1987"], correct: 1, topic: "eCash", link: "#ecash-detail" },
+            { question: "What technology did David Chaum invent for anonymous payments?", options: ["Blockchain", "Blind signatures", "Proof of work", "Smart contracts"], correct: 1, topic: "eCash", link: "#ecash-detail" },
+            { question: "What company did David Chaum found to implement eCash?", options: ["PayPal", "DigiCash", "E-Gold", "Liberty Reserve"], correct: 1, topic: "eCash", link: "#ecash-detail" },
+            { question: "Who developed the concept of cryptographic timestamps in 1991?", options: ["Wei Dai", "Stuart Haber & Scott Stornetta", "Nick Szabo", "Adam Back"], correct: 1, topic: "Timestamps", link: "#timestamps-detail" },
+            { question: "Cryptographic timestamps addressed what fundamental problem?", options: ["Currency inflation", "Document integrity", "Network speed", "User privacy"], correct: 1, topic: "Timestamps", link: "#timestamps-detail" },
+
+            // Cypherpunks
+            { question: "In what year did the Cypherpunks mailing list begin?", options: ["1990", "1991", "1992", "1993"], correct: 2, topic: "Cypherpunks", link: "#cypherpunks-detail" },
+            { question: "Which of these was NOT a founding Cypherpunk?", options: ["Eric Hughes", "Timothy May", "Satoshi Nakamoto", "John Gilmore"], correct: 2, topic: "Cypherpunks", link: "#cypherpunks-detail" },
+            { question: "What document outlined the Cypherpunk philosophy?", options: ["Bitcoin Whitepaper", "A Cypherpunk's Manifesto", "The Crypto Anarchist Manifesto", "Both B and C"], correct: 3, topic: "Cypherpunks", link: "#cypherpunks-detail" },
+            { question: "Who invented Hashcash proof-of-work?", options: ["Hal Finney", "Adam Back", "Nick Szabo", "Wei Dai"], correct: 1, topic: "Hashcash", link: "#hashcash-detail" },
+            { question: "In what year was Hashcash proposed?", options: ["1995", "1997", "1999", "2001"], correct: 1, topic: "Hashcash", link: "#hashcash-detail" },
+            { question: "What was Hashcash originally designed to combat?", options: ["Double spending", "Email spam", "DDoS attacks", "Sybil attacks"], correct: 1, topic: "Hashcash", link: "#hashcash-detail" },
+            { question: "Who proposed b-money in 1998?", options: ["Nick Szabo", "Wei Dai", "Hal Finney", "Adam Back"], correct: 1, topic: "B-Money", link: "#bmoney-detail" },
+            { question: "Who conceived Bit Gold?", options: ["Wei Dai", "Nick Szabo", "David Chaum", "Hal Finney"], correct: 1, topic: "B-Money", link: "#bmoney-detail" },
+
+            // Attempts
+            { question: "What did RPOW stand for?", options: ["Reusable Proofs of Work", "Rapid Payment of Wealth", "Random Proof of Worth", "Reliable Protocol of Work"], correct: 0, topic: "RPOW", link: "#rpow-detail" },
+            { question: "Who created RPOW in 2004?", options: ["Adam Back", "Wei Dai", "Hal Finney", "Nick Szabo"], correct: 2, topic: "RPOW", link: "#rpow-detail" },
+            { question: "What year was e-gold shut down?", options: ["2004", "2006", "2008", "2010"], correct: 2, topic: "E-Gold", link: "#egold-detail" },
+            { question: "Why was e-gold ultimately shut down?", options: ["Technical failure", "Lack of users", "Money laundering charges", "Competition from PayPal"], correct: 2, topic: "E-Gold", link: "#egold-detail" },
+
+            // Genesis
+            { question: "When was the Bitcoin whitepaper published?", options: ["August 2008", "October 2008", "December 2008", "January 2009"], correct: 1, topic: "Whitepaper", link: "#whitepaper-detail" },
+            { question: "What is the title of the Bitcoin whitepaper?", options: ["Digital Cash", "Bitcoin: A Peer-to-Peer Electronic Cash System", "Cryptocurrency Manifesto", "The Future of Money"], correct: 1, topic: "Whitepaper", link: "#whitepaper-detail" },
+            { question: "What message was encoded in the Genesis Block?", options: ["Hello World", "Let there be Bitcoin", "The Times 03/Jan/2009 Chancellor on brink of second bailout for banks", "In code we trust"], correct: 2, topic: "Genesis Block", link: "#genesis-detail" },
+            { question: "What date was the Genesis Block mined?", options: ["October 31, 2008", "January 3, 2009", "January 12, 2009", "May 22, 2010"], correct: 1, topic: "Genesis Block", link: "#genesis-detail" },
+            { question: "Who received the first Bitcoin transaction from Satoshi?", options: ["Nick Szabo", "Adam Back", "Hal Finney", "Wei Dai"], correct: 2, topic: "Running Bitcoin", link: "#running-bitcoin-detail" },
+            { question: "What did Hal Finney famously tweet on January 10, 2009?", options: ["Bitcoin is the future", "Running bitcoin", "First transaction complete", "Mining my first block"], correct: 1, topic: "Running Bitcoin", link: "#running-bitcoin-detail" },
+
+            // Ecosystem
+            { question: "What is Bitcoin Pizza Day?", options: ["Satoshi's birthday", "First real-world Bitcoin purchase", "Bitcoin's whitepaper anniversary", "First exchange opening"], correct: 1, topic: "Pizza Day", link: "#pizza-detail" },
+            { question: "How many bitcoins were paid for two pizzas on Bitcoin Pizza Day?", options: ["100", "1,000", "10,000", "100,000"], correct: 2, topic: "Pizza Day", link: "#pizza-detail" },
+            { question: "What date is Bitcoin Pizza Day?", options: ["January 3", "May 22", "October 31", "December 25"], correct: 1, topic: "Pizza Day", link: "#pizza-detail" },
+            { question: "In what year did Mt. Gox open for Bitcoin trading?", options: ["2009", "2010", "2011", "2012"], correct: 1, topic: "Mt. Gox", link: "#mtgox-open-detail" },
+            { question: "What was Mt. Gox originally created for?", options: ["Bitcoin trading", "Magic: The Gathering card trading", "Stock trading", "Gold trading"], correct: 1, topic: "Mt. Gox", link: "#mtgox-open-detail" },
+            { question: "What year did Silk Road launch?", options: ["2010", "2011", "2012", "2013"], correct: 1, topic: "Silk Road", link: "#silkroad-detail" },
+            { question: "Who founded Silk Road?", options: ["Mark Karpeles", "Ross Ulbricht", "Charlie Shrem", "Roger Ver"], correct: 1, topic: "Silk Road", link: "#silkroad-detail" },
+            { question: "When did Satoshi Nakamoto disappear from public communication?", options: ["2009", "2010", "2011", "2012"], correct: 2, topic: "Satoshi", link: "#satoshi-disappear-detail" },
+            { question: "What was the block reward before the first halving?", options: ["100 BTC", "50 BTC", "25 BTC", "12.5 BTC"], correct: 1, topic: "Halving", link: "#halving-detail" },
+            { question: "In what year did the first Bitcoin halving occur?", options: ["2011", "2012", "2013", "2014"], correct: 1, topic: "Halving", link: "#halving-detail" },
+            { question: "What event in 2013 caused a surge in Bitcoin interest in Europe?", options: ["Mt. Gox hack", "Cyprus banking crisis", "Silk Road shutdown", "First Bitcoin ATM"], correct: 1, topic: "Cyprus", link: "#cyprus-detail" },
+            { question: "When did the FBI shut down Silk Road?", options: ["2012", "2013", "2014", "2015"], correct: 1, topic: "Silk Road Shutdown", link: "#silkroad-shutdown-detail" },
+            { question: "Where was the first Bitcoin ATM installed?", options: ["New York", "London", "Vancouver", "Tokyo"], correct: 2, topic: "Bitcoin ATM", link: "#btc-atm-detail" },
+            { question: "When did Bitcoin first cross $1,000?", options: ["2012", "2013", "2014", "2015"], correct: 1, topic: "Bitcoin $1000", link: "#btc-1000-detail" },
+            { question: "How many bitcoins were lost in the Mt. Gox collapse?", options: ["100,000", "450,000", "850,000", "1,000,000"], correct: 2, topic: "Mt. Gox Collapse", link: "#mtgox-collapse-detail" },
+            { question: "In what year did Mt. Gox collapse?", options: ["2012", "2013", "2014", "2015"], correct: 2, topic: "Mt. Gox Collapse", link: "#mtgox-collapse-detail" },
+            { question: "When was Blockstream founded?", options: ["2012", "2013", "2014", "2015"], correct: 2, topic: "Blockstream", link: "#blockstream-detail" },
+            { question: "What technology did Blockstream develop to scale Bitcoin?", options: ["Lightning Network", "Sidechains (Liquid)", "SegWit", "Taproot"], correct: 1, topic: "Blockstream", link: "#blockstream-detail" },
+            { question: "Who is the CEO of Blockstream?", options: ["Adam Back", "Hal Finney", "Nick Szabo", "Gavin Andresen"], correct: 0, topic: "Blockstream", link: "#blockstream-detail" }
+        ];
+
+        let currentQuizQuestion = 0;
+        let userAnswers = [];
+        let shuffledQuestions = [];
+
+        const quizModal = document.getElementById('quizModal');
+        const quizResultsModal = document.getElementById('quizResultsModal');
+        const startQuizBtn = document.getElementById('startQuizBtn');
+        const quizCloseBtn = document.getElementById('quizClose');
+        const resultsCloseBtn = document.getElementById('resultsClose');
+        const quizContent = document.getElementById('quizContent');
+        const quizProgressText = document.getElementById('quizProgress');
+        const quizProgressFill = document.getElementById('quizProgressFill');
+        const prevBtn = document.getElementById('quizPrev');
+        const nextBtn = document.getElementById('quizNext');
+        const submitBtn = document.getElementById('quizSubmit');
+        const retakeBtn = document.getElementById('retakeQuiz');
+        const shareBtn = document.getElementById('shareScore');
+
+        function shuffleArray(array) {
+            const shuffled = [...array];
+            for (let i = shuffled.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
+            }
+            return shuffled;
+        }
+
+        function startQuiz() {
+            shuffledQuestions = shuffleArray(quizQuestions).slice(0, 21);
+            userAnswers = new Array(21).fill(null);
+            currentQuizQuestion = 0;
+            quizModal.classList.add('active');
+            renderQuestion();
+        }
+
+        function renderQuestion() {
+            const q = shuffledQuestions[currentQuizQuestion];
+            const selectedAnswer = userAnswers[currentQuizQuestion];
+
+            quizProgressText.textContent = `Question ${currentQuizQuestion + 1} of 21`;
+            quizProgressFill.style.width = `${((currentQuizQuestion + 1) / 21) * 100}%`;
+
+            let optionsHTML = q.options.map((opt, idx) => `
+                <label class="quiz-option ${selectedAnswer === idx ? 'selected' : ''}" data-index="${idx}">
+                    <input type="radio" name="quiz-answer" value="${idx}" ${selectedAnswer === idx ? 'checked' : ''}>
+                    <span class="option-marker"></span>
+                    <span class="option-text">${opt}</span>
+                </label>
+            `).join('');
+
+            quizContent.innerHTML = `
+                <p class="quiz-question">${q.question}</p>
+                <div class="quiz-options">${optionsHTML}</div>
+            `;
+
+            // Add click handlers
+            document.querySelectorAll('.quiz-option').forEach(opt => {
+                opt.addEventListener('click', () => {
+                    const idx = parseInt(opt.dataset.index);
+                    userAnswers[currentQuizQuestion] = idx;
+                    document.querySelectorAll('.quiz-option').forEach(o => o.classList.remove('selected'));
+                    opt.classList.add('selected');
+                });
+            });
+
+            // Update navigation
+            prevBtn.disabled = currentQuizQuestion === 0;
+            if (currentQuizQuestion === 20) {
+                nextBtn.style.display = 'none';
+                submitBtn.style.display = 'block';
+            } else {
+                nextBtn.style.display = 'block';
+                submitBtn.style.display = 'none';
+            }
+        }
+
+        function showResults() {
+            let score = 0;
+            const missedTopicsMap = new Map();
+
+            shuffledQuestions.forEach((q, idx) => {
+                if (userAnswers[idx] === q.correct) {
+                    score++;
+                } else {
+                    if (!missedTopicsMap.has(q.topic)) {
+                        missedTopicsMap.set(q.topic, { topic: q.topic, link: q.link });
+                    }
+                }
+            });
+
+            document.getElementById('scoreNumber').textContent = score;
+
+            let message = '';
+            if (score === 21) message = "Perfect score! You're a Bitcoin history expert!";
+            else if (score >= 18) message = "Excellent! You know your Bitcoin history well.";
+            else if (score >= 14) message = "Good job! You have solid knowledge of Bitcoin's origins.";
+            else if (score >= 10) message = "Not bad! There's more to learn about Bitcoin's journey.";
+            else message = "Keep exploring! Bitcoin's history is fascinating.";
+            document.getElementById('scoreMessage').textContent = message;
+
+            const readingList = document.getElementById('readingList');
+            const furtherReading = document.getElementById('furtherReading');
+
+            const topicData = {
+                'Diffie-Hellman': { icon: '🔐', desc: 'The 1976 breakthrough that made secure key exchange possible without prior secrets.' },
+                'eCash': { icon: '💳', desc: 'David Chaum\'s 1983 invention of blind signatures for anonymous digital payments.' },
+                'Timestamps': { icon: '⏰', desc: 'Haber & Stornetta\'s 1991 system for proving document existence at a specific time.' },
+                'Cypherpunks': { icon: '👤', desc: 'The 1992 movement of activists advocating privacy through cryptography.' },
+                'Hashcash': { icon: '⛏️', desc: 'Adam Back\'s 1997 proof-of-work system that influenced Bitcoin\'s mining.' },
+                'B-Money': { icon: '💰', desc: 'Wei Dai\'s 1998 proposal for an anonymous, distributed electronic cash system.' },
+                'RPOW': { icon: '🔄', desc: 'Hal Finney\'s 2004 reusable proof-of-work system, a direct Bitcoin precursor.' },
+                'E-Gold': { icon: '🥇', desc: 'The 2006 cautionary tale of centralized digital currency and regulatory action.' },
+                'Whitepaper': { icon: '📄', desc: 'Satoshi Nakamoto\'s 2008 paper introducing Bitcoin to the world.' },
+                'Genesis Block': { icon: '⚡', desc: 'The first Bitcoin block, mined January 3, 2009, with its famous newspaper headline.' },
+                'Running Bitcoin': { icon: '🏃', desc: 'Hal Finney\'s historic January 2009 tweet announcing he was running Bitcoin.' },
+                'Pizza Day': { icon: '🍕', desc: 'The first real-world Bitcoin transaction: 10,000 BTC for two pizzas in 2010.' },
+                'Mt. Gox': { icon: '🏛️', desc: 'The Tokyo exchange that became the world\'s largest Bitcoin trading platform.' },
+                'Silk Road': { icon: '🛣️', desc: 'The 2011 darknet marketplace that proved Bitcoin\'s utility as digital cash.' },
+                'Satoshi': { icon: '👻', desc: 'The mysterious 2011 disappearance of Bitcoin\'s pseudonymous creator.' },
+                'Halving': { icon: '✂️', desc: 'The 2012 event that cut Bitcoin\'s block reward in half for the first time.' },
+                'Cyprus': { icon: '🏦', desc: 'The 2013 banking crisis that highlighted Bitcoin as an alternative store of value.' },
+                'Silk Road Shutdown': { icon: '🚫', desc: 'The FBI\'s 2013 seizure of Silk Road and arrest of Ross Ulbricht.' },
+                'Bitcoin ATM': { icon: '🏧', desc: 'The world\'s first Bitcoin ATM, installed in Vancouver in October 2013.' },
+                'Bitcoin $1000': { icon: '📈', desc: 'Bitcoin\'s first breakthrough to $1,000 in November 2013.' },
+                'Mt. Gox Collapse': { icon: '💥', desc: 'The 2014 exchange failure that lost 850,000 bitcoins and shook the industry.' },
+                'Blockstream': { icon: '🌊', desc: 'The 2014 founding of a company dedicated to Bitcoin infrastructure development.' }
+            };
+
+            if (missedTopicsMap.size > 0) {
+                furtherReading.style.display = 'block';
+                const uniqueTopics = Array.from(missedTopicsMap.values()).slice(0, 4);
+                readingList.innerHTML = uniqueTopics.map(t => {
+                    const data = topicData[t.topic] || { icon: '📖', desc: 'Learn more about this topic.' };
+                    return `<a href="${t.link}" class="reading-link" onclick="closeResultsAndNavigate('${t.link}'); return false;">
+                        <div class="reading-icon">${data.icon}</div>
+                        <div class="reading-info">
+                            <div class="reading-title">${t.topic}</div>
+                            <div class="reading-desc">${data.desc}</div>
+                        </div>
+                    </a>`;
+                }).join('');
+            } else {
+                furtherReading.style.display = 'none';
+            }
+
+            quizModal.classList.remove('active');
+            quizResultsModal.classList.add('active');
+        }
+
+        let isFromQuizReview = false;
+
+        function closeResultsAndNavigate(link) {
+            // Navigate to the detail section from quiz review
+            const detailId = link.replace('#', '');
+            const detailSection = document.getElementById(detailId);
+            if (detailSection) {
+                isFromQuizReview = true;
+                isInDetailView = true;
+                activeDetailId = detailId;
+
+                // Update back button text
+                if (backToTimelineBtn) {
+                    backToTimelineBtn.innerHTML = '<span class="arrow-up">↑</span> Back to Quiz Review';
+                }
+
+                // Make parent event visible (detail sections are inside timeline-events)
+                const parentEvent = detailSection.closest('.timeline-event');
+                if (parentEvent) {
+                    parentEvent.style.opacity = '1';
+                    parentEvent.style.visibility = 'visible';
+                    parentEvent.style.pointerEvents = 'auto';
+                    parentEvent.style.zIndex = '20000';
+                    parentEvent.style.position = 'fixed';
+                    parentEvent.style.top = '0';
+                    parentEvent.style.left = '0';
+                    parentEvent.style.width = '100vw';
+                    parentEvent.style.height = '100vh';
+                    parentEvent.style.transform = 'none';
+                    const eventCard = parentEvent.querySelector('.event-card');
+                    if (eventCard) eventCard.style.display = 'none';
+                    const eventQuote = parentEvent.querySelector('.event-quote');
+                    if (eventQuote) eventQuote.style.display = 'none';
+                }
+
+                // Show timeline wrapper
+                if (timelineWrapper) timelineWrapper.classList.add('visible');
+
+                // Add special class for instant appearance from quiz
+                detailSection.classList.add('from-quiz');
+                detailSection.classList.add('active');
+
+                // Show back button and mode toggle
+                if (backToTimelineBtn) backToTimelineBtn.classList.add('visible');
+                if (modeToggleBtn) modeToggleBtn.classList.add('visible');
+
+                if (isLightMode) {
+                    detailSection.classList.add('light-mode');
+                }
+
+                // Hide quiz modal and ending
+                quizResultsModal.classList.remove('active');
+                if (ending) ending.classList.remove('visible');
+            }
+        }
+
+        function shareScore() {
+            const score = document.getElementById('scoreNumber').textContent;
+            const text = `I scored ${score}/21 on Blockstream's Bitcoin History page. How well do you know Bitcoin's history? Test yourself:`;
+            const url = 'https://bitcoin-timeline-site.vercel.app/';
+            const twitterUrl = `https://twitter.com/intent/tweet?text=${encodeURIComponent(text)}&url=${encodeURIComponent(url)}`;
+            window.open(twitterUrl, '_blank');
+        }
+
+        function retakeQuiz() {
+            // Reset answers but keep the same questions
+            userAnswers = new Array(21).fill(null);
+            currentQuizQuestion = 0;
+            quizResultsModal.classList.remove('active');
+            quizModal.classList.add('active');
+            renderQuestion();
+        }
+
+        // Event listeners
+        if (startQuizBtn) startQuizBtn.addEventListener('click', startQuiz);
+        if (quizCloseBtn) quizCloseBtn.addEventListener('click', () => quizModal.classList.remove('active'));
+
+        const resultsBackBtn = document.getElementById('resultsBackBtn');
+        if (resultsBackBtn) resultsBackBtn.addEventListener('click', () => {
+            quizResultsModal.classList.remove('active');
+        });
+
+        if (prevBtn) prevBtn.addEventListener('click', () => { currentQuizQuestion--; renderQuestion(); });
+        if (nextBtn) nextBtn.addEventListener('click', () => { currentQuizQuestion++; renderQuestion(); });
+        if (submitBtn) submitBtn.addEventListener('click', showResults);
+        if (retakeBtn) retakeBtn.addEventListener('click', retakeQuiz);
+        if (shareBtn) shareBtn.addEventListener('click', shareScore);
     </script>
 </body>
 </html>
